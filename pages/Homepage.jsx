@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View, Button, TouchableOpacity, Alert } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import { Text, View, Button } from 'react-native';
+import React, { useContext } from 'react';
 import DialogInput from 'react-native-dialog-input';
 
 import { NotesContext } from './NotesContext';
 
 export default function Homepage(props) {
     const [visible, setVisible] = React.useState(false);
-    //const [input, setInput] = React.useState('');
     const { notes, setNotes } = useContext(NotesContext)
 
     const addNewCategory = (text) => {
@@ -19,11 +18,13 @@ export default function Homepage(props) {
 
     return (
         <View>
-            <Text style={{ fontSize: 30 }}>My personal NOTES</Text>
+            <Text style={{ fontSize: 30, marginBottom: 20 }}>My personal NOTES</Text>
             {
                 Object.keys(notes).map((category) => {
-                    return <Button key={category} style={{ height: 20, padding: 20 }} title={category + ' ( ' + notes[category].length + ' )'}
+                    return (<View key={category} style={{marginTop:7}}>
+                        <Button key={category} style={{ height: 20, padding: 20 }} title={category + ' ( ' + notes[category].length + ' )'}
                         onPress={() => props.navigation.navigate('Category', { category })} />
+                        </View>)
                 })
             }
             <DialogInput
@@ -37,7 +38,9 @@ export default function Homepage(props) {
                 }}
                 closeDialog={() => setVisible(false)}>
             </DialogInput>
-            <Button title='add new category' onPress={() => setVisible(true)} />
+            <View style={{ marginTop: 20 }}>
+                <Button title='add new category' onPress={() => setVisible(true)} color='#f194ff' />
+            </View>
         </View>
     )
 }

@@ -1,10 +1,10 @@
-import { TouchableOpacity, Text, Modal, StyleSheet, View, Alert, Pressable } from 'react-native';
-import React, { useContext, useState } from 'react'
+import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
+import React, { useContext } from 'react'
 import { NotesContext } from './NotesContext';
 
+
 export default function Note(props) {
-  const { notes, setNotes, modalVisible, setModalVisible } = useContext(NotesContext)
-  //const category = props.category
+  const { notes, setNotes } = useContext(NotesContext)
 
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
@@ -18,43 +18,25 @@ export default function Note(props) {
     let newNotesByCategory = newNotes[props.category].filter((note) => note.description !== content)
     newNotes[props.category] = newNotesByCategory
     setNotes(newNotes)
+    props.navigation.navigate('Category', {category: props.category})
   }
 
   return (
     <TouchableOpacity
-      onLongPress={() => setModalVisible(true)}
+      onLongPress={() => {
+        Alert.alert('Delete Note', 'Are you sure?', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => deleteNote(props.description) },
+        ]);
+      }}
       style={[styles.card, { backgroundColor: generateColor() }]}>
 
       <Text numberOfLines={1} style={styles.title}>{props.title}</Text>
-      <Text numberOfLines={4} style={styles.note}>{props.content}</Text>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Are you sure you want to delete this note?</Text>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => {
-                deleteNote(props.content)
-                setModalVisible(!modalVisible)
-              }
-              }>
-              <Text style={styles.textStyle}>Yes</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.button, styles.buttonClose, styles.buttonDelete]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>No</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      <Text numberOfLines={4} style={styles.note}>{props.description}</Text>
     </TouchableOpacity>
 
   )
@@ -69,13 +51,12 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.34,
     shadowRadius: 6.27,
-
     elevation: 10,
     shadowRadius: 5,
     shadowOpacity: 1.0,
     borderRadius: 5,
-    margin: 20,
-    paddingRight: 20,
+    margin: 10,
+    paddingRight: 10,
     width: 138,
     height: 136,
     color: '#fff',
